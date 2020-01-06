@@ -1,6 +1,7 @@
 import pyowm
 import const
 import statistics
+import bot_answers
 from weather_status import get_weather_status
 from googletrans import Translator
 
@@ -29,34 +30,25 @@ def get_weather(city):
     max_temperature = format_temperature(w, 'temp_max')
     min_temperature = format_temperature(w, 'temp_min')
 
-    advice = 'Тут могла быть ваша реклама.'
-    advice_1 = 'Сегодня просто неимоверно ебучий дубак, сиди дома!'
-    advice_2 = 'Будет ебеняче холодно, подумай, стоит ли оно того?'
-    advice_3 = 'Шапку не забудь, а то уши отморозишь.'
-    advice_4 = 'Одевайся теплее, пупсик!'
-    advice_5 = 'Довольно тепло, можно идти без шапки.'
-    advice_6 = 'Будет жарковато!'
-    advice_7 = 'Ебучая жара, лучше останься дома под кондеем.'
-
     a = (statistics.mean([float(max_temperature), float(min_temperature)])
          )
     a = round(a)
     if a in range(-30, -20):
-        advice = advice_1
+        advice = bot_answers.advice_1
     if a in range(-19, -10):
-        advice = advice_2
+        advice = bot_answers.advice_2
     if a in range(-9, 0):
-        advice = advice_3
+        advice = bot_answers.advice_3
     if a in range(1, 10):
-        advice = advice_4
+        advice = bot_answers.advice_4
     if a in range(10, 18):
-        advice = advice_5
+        advice = bot_answers.advice_5
     if a in range(18, 30):
-        advice = advice_6
+        advice = bot_answers.advice_6
     if a in range(30, 40):
-        advice = advice_7
+        advice = bot_answers.advice_7
     else:
-        advice
+        bot_answers.advice
 
     ##### OTHER #####
     hum = w.get_humidity()
@@ -67,7 +59,7 @@ def get_weather(city):
         city.title(),
         '' if min_temperature == max_temperature else ' от ' + min_temperature + '°C',
         max_temperature,
-        '\nНа данный момент температура ' + current_temperature + '°C. '+ advice +
+        '\nНа данный момент температура ' + current_temperature + '°C. '+ bot_answers.advice +
         '\n' + '\n🌀 Скорость ветра ' + str(wind) + 'м/с, относительная влажность воздуха ' + str(hum) + '%.'
         '\n' + '\n' + get_weather_status(str(w.get_detailed_status()))
     )
