@@ -3,6 +3,7 @@ import const
 import statistics
 import bot_answers
 from weather_status import get_weather_status
+from googletrans import Translator
 
 owm = pyowm.OWM(const.owmAPI)
 
@@ -16,8 +17,13 @@ def format_temperature(w, t):
 
 def get_weather(city):
 
+    ##### TRANSLATE  #####
+    translator = Translator()
+    city_en = translator.translate([city], dest='en')[0].text
+    city_ru = translator.translate([city], dest='ru')[0].text
+
     ##### LOCATION #####
-    observation = owm.weather_at_place(city)
+    observation = owm.weather_at_place(city_en)
     w = observation.get_weather()
 
     ##### TEMPERATURE #####
@@ -57,7 +63,7 @@ def get_weather(city):
 
     ##### ANSWER #####
     answer = '\U0001F321 В городе {} сегодня ожидается{} до {}°C.{}'.format(
-        city.title(),
+        city_ru.title(),
         '' if min_temperature == max_temperature else ' от ' + min_temperature + '°C',
         max_temperature,
         '\nНа данный момент температура ' + current_temperature + '°C. '+ advice +
