@@ -3,11 +3,10 @@ import const
 import statistics
 import bot_answers
 from weather_status import get_weather_status
-from googletrans import Translator
 
 owm = pyowm.OWM(const.owmAPI)
 
-
+##### TEMPERATURE FORMAT #####
 def format_temperature(w, t):
     temperature = w.get_temperature('celsius')[t]
     temperature = int(temperature)
@@ -16,10 +15,6 @@ def format_temperature(w, t):
 
 
 def get_weather(city):
-
-    ##### TRANSLATE #####
-    translator = Translator()
-    city_en= translator.translate(city, dest='en')
 
     ##### LOCATION #####
     observation = owm.weather_at_place(city)
@@ -71,8 +66,6 @@ def get_weather(city):
     )
 
     return answer
-    print(answer)
-
 
 if __name__ == '__main__':
     city = input('Какой город вас интересует?')
