@@ -7,6 +7,12 @@ select_city_message = '\U0001F30D Выберите город из списка 
 select_city_error_message = '\U000026D4 К сожалению, этот город не добавлен, или вы ввели неверное значение.' \
                     '\n\n\U0001F4A1 Попробуйте ввести город в английской раскладке!'
 
+cancel_message = 'Что-то еще?'
+select_lang_message = 'Выберите язык перевода.'
+input_text_to_translate = 'Введите текст.'
+translator_error_message = 'Ошибка перевода.'
+
+
 #weather.py
 advice_message = 'Тут могла быть ваша реклама.'
 advice_message_1 = 'Спонсор сегодняшней погоды - невыносимый адский дубак. Выходить не рекомендую.'
