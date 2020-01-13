@@ -22,15 +22,13 @@ keyboard3.row('Да', 'Нет')
 ##### START MESSAGE #####
 @bot.message_handler(commands=['start'])
 def start_message(message):
-    bot.send_message(message.chat.id, bot_answers.start_message
-                     )
+    bot.send_message(message.chat.id, bot_answers.start_message)
 
 
 ##### HELP MESSAGE #####
 @bot.message_handler(commands=['help'])
 def help_message(message):
-    bot.send_message(message.chat.id, bot_answers.help_message, reply_markup=keyboard1
-                     )
+    bot.send_message(message.chat.id, bot_answers.help_message, reply_markup=keyboard1)
 
 
 ##### WEATHER #####
@@ -44,8 +42,7 @@ def select_city(message):
 
 @bot.message_handler(commands=['get_weather'])
 def get_weather(message):
-    msg = bot.send_message(message.chat.id, bot_answers.select_city_message, reply_markup=keyboard2
-                           )
+    msg = bot.send_message(message.chat.id, bot_answers.select_city_message, reply_markup=keyboard2)
     bot.register_next_step_handler(msg, select_city)
     print(msg)
 

@@ -33,8 +33,7 @@ def get_weather(city):
 
     ##### ADVICES #####
     advice = bot_answers.advice_message
-    a = (statistics.mean([float(max_temperature), float(min_temperature)])
-         )
+    a = (statistics.mean([float(max_temperature), float(min_temperature)]))
     a = round(a)
     if a in range(-50, -30):
         advice = bot_answers.advice_message_1
@@ -68,8 +67,7 @@ def get_weather(city):
         max_temperature,
         '\nНа данный момент температура ' + current_temperature + '°C. '+ advice +
         '\n' + '\n🌀 Скорость ветра ' + str(wind) + 'м/с, относительная влажность воздуха ' + str(hum) + '%.'
-        '\n' + '\n' + get_weather_status(str(w.get_detailed_status()))
-    )
+        '\n' + '\n' + get_weather_status(str(w.get_detailed_status())))
 
     return answer
 
