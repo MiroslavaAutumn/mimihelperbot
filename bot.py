@@ -3,6 +3,7 @@ import const
 import weather
 import logging
 import bot_answers
+import translator
 
 bot = telebot.TeleBot(const.botAPI)
 
@@ -12,12 +13,45 @@ logging.debug('current_weather')
 
 ##### KEYBOARDS #####
 keyboard1 = telebot.types.ReplyKeyboardMarkup(False, True)
-keyboard1.row('Погода', 'может ли робот написать симфонию, сделать шедевр?')
+keyboard1.row('Погода', 'Переводчик')
 keyboard2 = telebot.types.ReplyKeyboardMarkup(False, True)
-keyboard2.row('Москва', 'Санкт-Петербург')
+keyboard2.row('Москва', 'Санкт Петербург', 'Отмена')
 keyboard3 = telebot.types.ReplyKeyboardMarkup(False, True)
 keyboard3.row('Да', 'Нет')
+ruen = 'С 🇷🇺 на 🇺🇸'
+enru = 'С 🇺🇸 на 🇷🇺'
+keyboard4 = telebot.types.ReplyKeyboardMarkup(False, True)
+keyboard4.row(ruen, enru)
 
+
+##### TRANSLATOR #####
+@bot.message_handler(commands=['translator'])
+def get_translation(message):
+    msg = bot.send_message(message.chat.id, bot_answers.select_lang_message, reply_markup=keyboard4
+                           )
+    bot.register_next_step_handler(msg, choose_lang_trans)
+    print(msg)
+
+def choose_lang_trans(message):
+    src = ''
+    dst = ''
+    if message.text == enru:
+        src = 'en'
+        dst = 'ru'
+    elif message.text == ruen:
+        src = 'ru'
+        dst = 'en'
+
+    bot.send_message(message.chat.id, bot_answers.input_text_to_translate)
+    bot.register_next_step_handler(message, translate_text, src, dst)
+
+def translate_text(message, src_lang, dest_lang):
+    try:
+        user_text = translator.get_translation(user_text=message.text, src_lang=src_lang, dest_lang=dest_lang
+                                               )
+    except Exception:
+        user_text = bot_answers.translator_error_message
+    bot.send_message(message.chat.id, user_text, reply_markup=keyboard1)
 
 ##### START MESSAGE #####
 @bot.message_handler(commands=['start'])
@@ -47,6 +81,18 @@ def get_weather(message):
     print(msg)
 
 
+##### SERVICE #####
+@bot.message_handler(content_types=['text'])
+def send_text(message):
+    print(message.text)
+    if message.text.lower() == 'отмена':
+        bot.send_message(message.chat.id, bot_answers.cancel_message, reply_markup=keyboard1)
+    if message.text.startswith('Погода'):
+        get_weather(message)
+    if message.text.startswith('Переводчик'):
+        get_translation(message)
+
+
 ##### CHAT #####
 @bot.message_handler(content_types=['text'])
 def send_text(message):
@@ -63,8 +109,6 @@ def send_text(message):
         bot.send_message(message.chat.id, 'Пидора ответ! '
                                           '\U0001F468\U0000200D\U00002764\U0000FE0F\U0000200D\U0001F468',
                          reply_markup=keyboard1)
-    if message.text.startswith('Погода'):
-        get_weather(message)
 
 
 bot.polling()
