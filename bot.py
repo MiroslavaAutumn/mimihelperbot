@@ -14,8 +14,6 @@ logging.debug('current_weather')
 ##### KEYBOARDS #####
 keyboard1 = telebot.types.ReplyKeyboardMarkup(False, True)
 keyboard1.row('Погода', 'Переводчик')
-keyboard2 = telebot.types.ReplyKeyboardMarkup(False, True)
-keyboard2.row('Москва', 'Санкт Петербург', 'Отмена')
 keyboard3 = telebot.types.ReplyKeyboardMarkup(False, True)
 keyboard3.row('Да', 'Нет')
 ruen = 'С 🇷🇺 на 🇺🇸'
@@ -66,20 +64,48 @@ def help_message(message):
 
 
 ##### WEATHER #####
-def select_city(message):
-    try:
-        current_weather = weather.get_weather(city=message.text)
-    except Exception:
-        current_weather = bot_answers.select_city_error_message
-    bot.send_message(message.chat.id, current_weather, reply_markup=keyboard1)
-
-
 @bot.message_handler(commands=['get_weather'])
 def get_weather(message):
-    msg = bot.send_message(message.chat.id, bot_answers.select_city_message, reply_markup=keyboard2)
-    bot.register_next_step_handler(msg, select_city)
-    print(msg)
+    bot_msg = bot.send_message(message.chat.id, bot_answers.select_city_message, reply_markup=gen_weather_markup())
 
+    def call_custom_city(user_msg):
+        weather_from_city(bot_msg.chat.id, user_msg.text, bot_msg.message_id, user_msg.message_id)
+
+    bot.register_next_step_handler(bot_msg, call_custom_city)
+    print(bot_msg)
+
+
+@bot.callback_query_handler(lambda call: call.data.startswith('weather'))
+def callback_query_weather(call):
+    city = call.data.split('|')[1]
+    weather_from_city(call.message.chat.id, city, call.message.message_id, 0)
+    bot.clear_step_handler_by_chat_id(call.message.chat.id)
+
+
+def weather_from_city(chat_id, city, message_id_bot, message_id_user):
+    # This supports cities from inline buttons
+    # and also a custom city from an user message.
+    try:
+        current_weather = weather.get_weather(city=city)
+    except Exception:
+        current_weather = bot_answers.select_city_error_message
+
+    bot.edit_message_text(current_weather, chat_id, message_id_bot)
+    if message_id_user != 0:
+        bot.delete_message(chat_id, message_id_user)
+
+
+def gen_weather_markup():
+    markup = telebot.types.InlineKeyboardMarkup()
+
+    def gen_button(city):
+        return telebot.types.InlineKeyboardButton(city, callback_data='weather|' + city)
+
+    markup.row(gen_button('Москва'))
+    markup.row(gen_button('Санкт Петербург'))
+    markup.row(gen_button('Екатеринбург'))
+    markup.row(gen_button('Новосибирск'))
+    return markup
 
 ##### SERVICE #####
 @bot.message_handler(content_types=['text'])
