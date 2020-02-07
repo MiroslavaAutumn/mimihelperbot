@@ -13,14 +13,21 @@ logging.debug('current_weather')
 
 ##### KEYBOARDS #####
 keyboard1 = telebot.types.ReplyKeyboardMarkup(False, True)
-keyboard1.row('Погода', 'Переводчик')
-keyboard3 = telebot.types.ReplyKeyboardMarkup(False, True)
-keyboard3.row('Да', 'Нет')
+keyboard1.row('Погода')
+keyboard1.row('Переводчик')
 ruen = 'С 🇷🇺 на 🇺🇸'
 enru = 'С 🇺🇸 на 🇷🇺'
 keyboard4 = telebot.types.ReplyKeyboardMarkup(False, True)
 keyboard4.row(ruen, enru)
 
+
+@bot.message_handler(content_types=['text'])
+def send_text(message):
+    print(message.text)
+    if message.text.startswith('Погода'):
+        get_weather(message)
+    if message.text.startswith('Переводчик'):
+        get_translation(message)
 
 ##### TRANSLATOR #####
 @bot.message_handler(commands=['translator'])
@@ -106,17 +113,6 @@ def gen_weather_markup():
     markup.row(gen_button('Екатеринбург'))
     markup.row(gen_button('Новосибирск'))
     return markup
-
-##### SERVICE #####
-@bot.message_handler(content_types=['text'])
-def send_text(message):
-    print(message.text)
-    if message.text.lower() == 'отмена':
-        bot.send_message(message.chat.id, bot_answers.cancel_message, reply_markup=keyboard1)
-    if message.text.startswith('Погода'):
-        get_weather(message)
-    if message.text.startswith('Переводчик'):
-        get_translation(message)
 
 
 ##### CHAT #####
