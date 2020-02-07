@@ -1,0 +1,5 @@
+venv/Lib/*
+venv/Scripts/*
+.idea/*
+*.pyc
+const.py
