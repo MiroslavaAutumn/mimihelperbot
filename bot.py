@@ -4,6 +4,9 @@ import weather
 import logging
 import bot_answers
 import translator
+from telebot import apihelper
+
+apihelper.proxy = {'https': const.proxyAPI}
 
 bot = telebot.TeleBot(const.botAPI)
 
