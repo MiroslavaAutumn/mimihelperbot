@@ -29,6 +29,7 @@ def send_text(message):
     if message.text.startswith('Переводчик'):
         get_translation(message)
 
+
 ##### TRANSLATOR #####
 @bot.message_handler(commands=['translator'])
 def get_translation(message):
@@ -36,6 +37,7 @@ def get_translation(message):
                            )
     bot.register_next_step_handler(msg, choose_lang_trans)
     print(msg)
+
 
 def choose_lang_trans(message):
     src = ''
@@ -50,6 +52,7 @@ def choose_lang_trans(message):
     bot.send_message(message.chat.id, bot_answers.input_text_to_translate)
     bot.register_next_step_handler(message, translate_text, src, dst)
 
+
 def translate_text(message, src_lang, dest_lang):
     try:
         user_text = translator.get_translation(user_text=message.text, src_lang=src_lang, dest_lang=dest_lang
@@ -57,6 +60,7 @@ def translate_text(message, src_lang, dest_lang):
     except Exception:
         user_text = bot_answers.translator_error_message
     bot.send_message(message.chat.id, user_text, reply_markup=keyboard1)
+
 
 ##### START MESSAGE #####
 @bot.message_handler(commands=['start'])
