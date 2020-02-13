@@ -32,29 +32,13 @@ def get_weather(city):
     min_temperature = format_temperature(w, 'temp_min')
 
     ##### ADVICES #####
-    advice = bot_answers.advice_message
-    a = (statistics.mean([float(max_temperature), float(min_temperature)]))
-    a = round(a)
-    if a in range(-50, -30):
-        advice = bot_answers.advice_message_1
-    if a in range(-30, -20):
-        advice = bot_answers.advice_message_2
-    if a in range(-20, -10):
-        advice = bot_answers.advice_message_3
-    if a in range(-10, 0):
-        advice = bot_answers.advice_message_4
-    if a in range(0, 10):
-        advice = bot_answers.advice_message_5
-    if a in range(10, 18):
-        advice = bot_answers.advice_message_6
-    if a in range(18, 30):
-        advice = bot_answers.advice_message_7
-    if a in range(30, 40):
-        advice = bot_answers.advice_message_8
-    if a in range(40, 60):
-        advice = bot_answers.advice_message_9
-    else:
-        bot_answers.advice_message
+    advice = bot_answers.advice_messages[0]
+    a = round(statistics.mean([float(max_temperature), float(min_temperature)]))
+    temperatures = [-50, -30, -20, -10, 0, 10, 18, 30, 40, 60]
+    for i, n in enumerate(temperatures):
+        if a < n:
+            advice = bot_answers.advice_messages[i]
+            break
 
     ##### OTHER #####
     hum = w.get_humidity()
