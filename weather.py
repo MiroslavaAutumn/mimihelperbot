@@ -1,11 +1,10 @@
 import pyowm
 import const
 import statistics
-import bot_answers
-from weather_status import get_weather_status
-from googletrans import Translator
+import weather_status
 
 owm = pyowm.OWM(const.owmAPI)
+
 
 ##### TEMPERATURE FORMAT #####
 def format_temperature(w, t):
@@ -16,14 +15,8 @@ def format_temperature(w, t):
 
 
 def get_weather(city):
-
-    ##### TRANSLATE  #####
-    translator = Translator()
-    city_en = translator.translate([city], dest='en')[0].text
-    city_ru = translator.translate([city], dest='ru')[0].text
-
     ##### LOCATION #####
-    observation = owm.weather_at_place(city_en)
+    observation = owm.weather_at_place(city)
     w = observation.get_weather()
 
     ##### TEMPERATURE #####
@@ -32,12 +25,12 @@ def get_weather(city):
     min_temperature = format_temperature(w, 'temp_min')
 
     ##### ADVICES #####
-    advice = bot_answers.advice_messages[0]
+    advice = weather_status.advice_messages[0]
     a = round(statistics.mean([float(max_temperature), float(min_temperature)]))
     temperatures = [-50, -30, -20, -10, 0, 10, 18, 30, 40, 60]
     for i, n in enumerate(temperatures):
         if a < n:
-            advice = bot_answers.advice_messages[i]
+            advice = weather_status.advice_messages[i]
             break
 
     ##### OTHER #####
@@ -46,14 +39,16 @@ def get_weather(city):
 
     ##### ANSWER #####
     answer = '\U0001F321 В городе {} сегодня ожидается{} до {}°C.{}'.format(
-        city_ru.title(),
+        city.title(),
         '' if min_temperature == max_temperature else ' от ' + min_temperature + '°C',
         max_temperature,
-        '\nНа данный момент температура ' + current_temperature + '°C. '+ advice +
+        '\nНа данный момент температура ' + current_temperature + '°C. ' + advice +
         '\n' + '\n🌀 Скорость ветра ' + str(wind) + 'м/с, относительная влажность воздуха ' + str(hum) + '%.'
-        '\n' + '\n' + get_weather_status(str(w.get_detailed_status())))
+        '\n' + '\n' + weather_status.get_weather_status(
+            str(w.get_detailed_status())))
 
     return answer
+
 
 if __name__ == '__main__':
     city = input('Какой город вас интересует?')
