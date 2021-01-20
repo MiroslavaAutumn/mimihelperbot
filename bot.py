@@ -1,6 +1,7 @@
 import telebot
 import const
 import weather
+import exchange_rates
 
 bot = telebot.TeleBot(const.botAPI)
 
@@ -26,6 +27,7 @@ keyboard1.row('🌦 Погода 🌦')
 keyboard1.row('💰 Курсы валют 💰')
 keyboard1.row('🇷🇺 Переводчик 🇺🇸')
 keyboard1.row('😁 Мими, пошути! 😁')
+
 ########################################################################################################################
 @bot.message_handler(content_types=['text'])
 def send_text(message):
@@ -91,9 +93,46 @@ def gen_weather_markup():
 ##### EXCHANGE RATE ####################################################################################################
 @bot.message_handler(commands=['er'])
 def get_exchange_rate(message):
-    bot.send_message(
-        message.chat.id,
-        'Курсы валют будут добавлены позднее.')
+    bot_msg = bot.send_message(message.chat.id,
+                               'Выберите валюту.\n Для USD и EUR будет показан курс к рублю, для крипты - к доллару.',
+                               reply_markup=gen_er_markup())
+
+    def call_currency(user_msg):
+        select_currency(bot_msg.chat.id, user_msg.text, bot_msg.message_id, user_msg.message_id)
+
+    bot.register_next_step_handler(bot_msg, call_currency)
+    print(bot_msg)
+
+
+@bot.callback_query_handler(lambda call: call.data.startswith('er'))
+def callback_query_currency(call):
+    coin = call.data.split('|')[1]
+    select_currency(call.message.chat.id, coin, call.message.message_id, 0)
+    bot.clear_step_handler_by_chat_id(call.message.chat.id)
+
+
+def select_currency(chat_id, coin, message_id_bot, message_id_user):
+    try:
+        current_er = exchange_rates.get_exchange_rate(coin=coin)
+    except Exception:
+        current_er = '\U000026D4 Ошибка! Выберите вариант из предложенных!'
+
+    bot.edit_message_text(current_er, chat_id, message_id_bot)
+    if message_id_user != 0:
+        bot.delete_message(chat_id, message_id_user)
+
+
+def gen_er_markup():
+    markup = telebot.types.InlineKeyboardMarkup()
+
+    def gen_button(cur_board):
+        return telebot.types.InlineKeyboardButton(cur_board, callback_data='er|' + cur_board)
+
+    markup.row(gen_button('USD'))
+    markup.row(gen_button('EUR'))
+    markup.row(gen_button('BTC'))
+    markup.row(gen_button('ETH'))
+    return markup
 
 
 #### TRANSLATOR ########################################################################################################
