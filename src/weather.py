@@ -1,5 +1,5 @@
 import pyowm
-import const
+from src import const
 import statistics
 import weather_status
 
@@ -44,7 +44,7 @@ def get_weather(city):
         max_temperature,
         '\nНа данный момент температура ' + current_temperature + '°C. ' + advice +
         '\n' + '\n🌀 Скорость ветра ' + str(wind) + 'м/с, относительная влажность воздуха ' + str(hum) + '%.'
-        '\n' + '\n' + weather_status.get_weather_status(
+                                                                                                         '\n' + '\n' + weather_status.get_weather_status(
             str(w.get_detailed_status())))
 
     return answer

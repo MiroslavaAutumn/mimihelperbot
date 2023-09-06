@@ -2,7 +2,7 @@ certifi==2020.12.5
 chardet==4.0.0
 geojson==2.5.0
 googletrans==3.0.0
-idna==3.0
+idna
 pyowm==2.3.0
 pyTelegramBotAPI==3.7.5
 requests==2.25.1
