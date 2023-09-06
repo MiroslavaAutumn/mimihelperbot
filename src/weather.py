@@ -1,5 +1,5 @@
 import pyowm
-from src import const
+import const
 import statistics
 import weather_status
 
