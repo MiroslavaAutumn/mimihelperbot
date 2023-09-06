@@ -2,4 +2,3 @@ venv/Lib/*
 venv/Scripts/*
 .idea/*
 *.pyc
-src/const.py
