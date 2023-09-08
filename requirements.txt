@@ -10,3 +10,4 @@ gunicorn==20.0.4
 PySocks==1.7.1
 pycoingecko==1.4.0
 forex-python==1.5
+beautifulsoup4==4.12.2

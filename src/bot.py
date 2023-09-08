@@ -2,6 +2,7 @@ import telebot
 import const
 import weather
 import exchange_rates
+import joke
 
 bot = telebot.TeleBot(const.botAPI)
 
@@ -146,10 +147,10 @@ def get_translation(message):
 ##### JOKE #############################################################################################################
 @bot.message_handler(commands=['joke'])
 def get_joke(message):
+    random_joke = joke.get_joke()
     bot.send_message(
         message.chat.id,
-        'Купил мужик шляпу, а она ему как раз! \n\n Скоро я научусть шутить смешнее!')
-
+        random_joke)
 
 ########################################################################################################################
 
